@@ -46,6 +46,12 @@ const userSchema = new mongoose.Schema({
         return this.role === 'lecturer';
         }
     }],
+    assignedTitle: {
+        type: String,
+        required: function() {
+        return this.role === 'lecturer';
+        }
+    },
     // Additional fields for all roles
     createdAt: {
         type: Date,
