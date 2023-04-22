@@ -17,7 +17,7 @@ app.use(cors());
 connectDB();
 
 // Use routes
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Export the app
 module.exports = app;
