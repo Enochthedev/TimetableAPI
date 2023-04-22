@@ -1,11 +1,23 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-//make a route
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+// Import database
+const connectDB = require('./data/db');
 
-//export the app
+// Import routes
+const authRoutes = require('./routes/auth.route');
 
+// Use middleware
+app.use(bodyParser.json());
+app.use(cors());
+
+// Connect to database
+connectDB();
+
+// Use routes
+app.use('/api/auth', authRoutes);
+
+// Export the app
 module.exports = app;
