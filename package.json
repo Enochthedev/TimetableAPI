@@ -28,5 +28,8 @@
     "mongoose": "^7.0.4",
     "nodemon": "^2.0.22",
     "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
   }
 }

@@ -22,8 +22,8 @@ const signupSchema = z.object({
         lastName: z.string().nonempty('Last name is required.'),
         email: z.string().nonempty('Email is required.').email('Email must be valid.'),
         password: z.string().nonempty('Password is required.').min(8, 'Password must be at least 8 characters.'),
-        faculty: z.string().nonempty('Faculty is required.'),
-        department: z.string().nonempty('Department is required.'),
+        faculty: z.string().optional(),
+        department: z.string().optional(),
         role: z.string().nonempty('Role is required.'),
 });
 

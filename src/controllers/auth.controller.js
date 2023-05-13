@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../data/models/user.model');
+const Department = require('../data/models/department.model');
 require('dotenv').config();
 
 const login = async (req, res) => {
@@ -44,7 +45,7 @@ const login = async (req, res) => {
 
 const signup = async (req, res) => {
     const { firstName, lastName, email, password, faculty, department, role } = req.body;
-    
+    const roleLower = role.toLowerCase();
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -54,6 +55,31 @@ const signup = async (req, res) => {
     // Hash password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+    //if admin role, skip the department check
+    if(roleLower === 'admin') {
+        const user = new User({
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            faculty,
+            roleLower
+        });
+        try {
+            // Save user to database
+            await user.save();
+            res.status(201).json({ message: 'Admin User created successfully' });
+        } catch (error) {
+            res.status(500).json({ message: 'Failed to create user' });
+        }
+        return;
+    }
+    // Check if department exists
+    const existingDepartment = await Department.findOne({ _id: department });
+    if (!existingDepartment) {
+        return res.status(400).json({ message: 'Department does not exist' });
+    }
+
     // Create user object
     const user = new User({
         firstName,
@@ -62,17 +88,23 @@ const signup = async (req, res) => {
         password: hashedPassword,
         faculty,
         department,
-        role
+        roleLower
     });
     
     try {
       // Save user to database
         await user.save();
+        //add user to department
+        await Department.updateOne(
+            { _id: department },
+            { $push: { users: user._id } }
+        );
         res.status(201).json({ message: 'User created successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to create user' });
     }
-    };
+    
+};
 
 module.exports = {
     login,

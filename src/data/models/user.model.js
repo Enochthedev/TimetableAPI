@@ -23,8 +23,15 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     department: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Department',
+        required: function() {
+        /* `return this.role !== 'admin';` is a validation function for the `department` field in the
+        `userSchema`. It ensures that the `department` field is required for all roles except for
+        the `admin` role. If the `role` field is set to `admin`, then the `department` field is not
+        required. */
+        return this.role !== 'admin';
+        }
     },
     role: {
         type: String,
